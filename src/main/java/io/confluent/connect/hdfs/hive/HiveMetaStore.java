@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.confluent.connect.hdfs.HdfsSinkConnectorConfig;
 import io.confluent.connect.hdfs.errors.HiveMetaStoreException;
@@ -46,11 +48,13 @@ public class HiveMetaStore {
 
   private static final Logger log = LoggerFactory.getLogger(HiveMetaStore.class);
   private final IMetaStoreClient client;
+  private final Map<String, String> topicTableMap;
 
   public HiveMetaStore(Configuration conf, HdfsSinkConnectorConfig connectorConfig) throws HiveMetaStoreException {
     HiveConf hiveConf = new HiveConf(conf, HiveConf.class);
     String hiveConfDir = connectorConfig.getString(HdfsSinkConnectorConfig.HIVE_CONF_DIR_CONFIG);
     String hiveMetaStoreURIs = connectorConfig.getString(HdfsSinkConnectorConfig.HIVE_METASTORE_URIS_CONFIG);
+    topicTableMap = parseMapConfig(connectorConfig.getList(HdfsSinkConnectorConfig.TOPIC_TABLE_MAP_CONFIG));
     if (hiveMetaStoreURIs.isEmpty()) {
       log.warn("hive.metastore.uris empty, an embedded Hive metastore will be "
                + "created in the directory the connector is started. "
@@ -356,6 +360,17 @@ public class HiveMetaStore {
   }
 
   public String tableNameConverter(String table){
-    return table == null ? table : table.replaceAll("\\.", "_");
+    return table == null ? table : topicTableMap.getOrDefault(table, table);
+  }
+
+  private Map<String, String> parseMapConfig(List<String> values) {
+    Map<String, String> map = new HashMap<>();
+    for (String value : values) {
+      String[] parts = value.split(":");
+      String topic = parts[0];
+      String type = parts[1];
+      map.put(topic, type);
+    }
+    return map;
   }
 }

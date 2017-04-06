@@ -14,6 +14,7 @@
 
 package io.confluent.connect.hdfs.avro;
 
+import io.confluent.connect.hdfs.hive.HiveMetaStore;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.Table;
 import org.apache.kafka.connect.data.Field;
@@ -151,8 +152,13 @@ public class HiveIntegrationAvroTest extends HiveTestBase {
   public void testHiveIntegrationTopicWithDotsAvro() throws Exception {
     assignment.add(TOPIC_WITH_DOTS_PARTITION);
 
+    connectorProps.put(HdfsSinkConnectorConfig.TOPIC_TABLE_MAP_CONFIG, "topic.with.dots:topic_with_dots");
+    configureConnector();
+    hiveMetaStore = new HiveMetaStore(conf, connectorConfig);
+
     Map<String, String> props = createProps();
     props.put(HdfsSinkConnectorConfig.HIVE_INTEGRATION_CONFIG, "true");
+    props.put(HdfsSinkConnectorConfig.TOPIC_TABLE_MAP_CONFIG, "topic.with.dots:topic_with_dots");
     HdfsSinkConnectorConfig config = new HdfsSinkConnectorConfig(props);
 
     DataWriter hdfsWriter = new DataWriter(config, context, avroData);

@@ -54,6 +54,12 @@ public class HdfsSinkConnectorConfig extends AbstractConfig {
   public static final String HADOOP_HOME_DEFAULT = "";
   private static final String HADOOP_HOME_DISPLAY = "Hadoop home directory";
 
+  public static final String TOPIC_TABLE_MAP_CONFIG = "topic.table.map";
+  public static final String TOPIC_TABLE_MAP_DOC =
+      "A map from kafka topic name to the destination hive table name, represented as a list of ``topic:table`` pairs";
+  public static final String TOPIC_TABLE_MAP_DEFAULT = "";
+  private static final String TOPIC_TABLE_MAP_DISPLAY = "Topic to table map";
+
   public static final String TOPICS_DIR_CONFIG = "topics.dir";
   private static final String TOPICS_DIR_DOC =
       "Top level HDFS directory to store the data ingested from Kafka.";
@@ -278,7 +284,8 @@ public class HdfsSinkConnectorConfig extends AbstractConfig {
                 HIVE_METASTORE_URIS_DISPLAY, hiveIntegrationDependentsRecommender)
         .define(HIVE_CONF_DIR_CONFIG, Type.STRING, HIVE_CONF_DIR_DEFAULT, Importance.HIGH, HIVE_CONF_DIR_DOC, HIVE_GROUP, 3, Width.MEDIUM, HIVE_CONF_DIR_DISPLAY, hiveIntegrationDependentsRecommender)
         .define(HIVE_HOME_CONFIG, Type.STRING, HIVE_HOME_DEFAULT, Importance.HIGH, HIVE_HOME_DOC, HIVE_GROUP, 4, Width.MEDIUM, HIVE_HOME_DISPLAY, hiveIntegrationDependentsRecommender)
-        .define(HIVE_DATABASE_CONFIG, Type.STRING, HIVE_DATABASE_DEFAULT, Importance.HIGH, HIVE_DATABASE_DOC, HIVE_GROUP, 5, Width.SHORT, HIVE_DATABASE_DISPLAY, hiveIntegrationDependentsRecommender);
+        .define(HIVE_DATABASE_CONFIG, Type.STRING, HIVE_DATABASE_DEFAULT, Importance.HIGH, HIVE_DATABASE_DOC, HIVE_GROUP, 5, Width.SHORT, HIVE_DATABASE_DISPLAY, hiveIntegrationDependentsRecommender)
+        .define(TOPIC_TABLE_MAP_CONFIG, Type.LIST, TOPIC_TABLE_MAP_DEFAULT, Importance.LOW, TOPIC_TABLE_MAP_DOC, HIVE_GROUP, 6, Width.MEDIUM, TOPIC_TABLE_MAP_DISPLAY, hiveIntegrationDependentsRecommender);
 
     // Define Security configuration group
     config.define(HDFS_AUTHENTICATION_KERBEROS_CONFIG, Type.BOOLEAN, HDFS_AUTHENTICATION_KERBEROS_DEFAULT, Importance.HIGH, HDFS_AUTHENTICATION_KERBEROS_DOC,
